@@ -12,7 +12,7 @@ ExecStartPre=-/usr/bin/mkdir -p /var/zookeeper
 ExecStartPre=/usr/bin/chattr -R +C /var/zookeeper
 ExecStartPre=-/usr/bin/docker kill zookeeper-%i
 ExecStartPre=-/usr/bin/docker rm zookeeper-%i
-ExecStartPre=/usr/bin/docker pull demystdata/zookeeper
+ExecStartPre=/usr/bin/docker pull cmbaron/zookeeper
 ExecStart=/usr/bin/docker run \
 	--rm \
 	--name zookeeper-%i \
@@ -23,7 +23,7 @@ ExecStart=/usr/bin/docker run \
 	--publish 2888:2888 \
 	--publish 3888:3888 \
 	--volume /var/zookeeper:/data \
-	demystdata/zookeeper
+	cmbaron/zookeeper
 
 ExecStop=/usr/bin/docker stop zookeeper-%i
 
