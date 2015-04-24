@@ -1,0 +1,13 @@
+[Unit]
+Description=Announce Zookeeper%i
+BindsTo=zookeeper@%i.service
+After=zookeeper@%i.service
+Requires=etcd.service
+
+[Service]
+EnvironmentFile=/etc/environment
+
+ExecStart=/bin/sh -c "while true; do export SVC=$COREOS_PUBLIC_IPV4:2181; etcdctl set /services/zookeeper%i-ip $COREOS_PUBLIC_IPV4 --ttl 60 || etcdctl update /services/zookeeper%i-ip $COREOS_PUBLIC_IPV4 --ttl 60; etcdctl set /services/zookeeper%i $SVC --ttl 60 || etcdctl update /services/zookeeper%i $SVC --ttl 60; etcdctl set /services/zookeepers #ALLIPPORTS# --ttl 60 || etcdctl update /services/zookeepers #ALLIPPORTS# --ttl 60; sleep 45; done"
+
+[X-Fleet]
+MachineOf=zookeeper@%i.service

@@ -1,0 +1,31 @@
+[Unit]
+Description=zookeeper
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+RestartSec=10
+TimeoutStartSec=0
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/mkdir -p /var/zookeeper
+ExecStartPre=/usr/bin/chattr -R +C /var/zookeeper
+ExecStartPre=-/usr/bin/docker kill zookeeper-%i
+ExecStartPre=-/usr/bin/docker rm zookeeper-%i
+ExecStartPre=/usr/bin/docker pull demystdata/zookeeper
+ExecStart=/usr/bin/docker run \
+	--rm \
+	--name zookeeper-%i \
+	--hostname ${COREOS_PUBLIC_IPV4} \
+	--env ZK_SERVER_NUMBER=%i \
+	--env ZK_SERVERS=#ZK_SERVERS# \
+	--publish 2181:2181 \
+	--publish 2888:2888 \
+	--publish 3888:3888 \
+	--volume /var/zookeeper:/data \
+	demystdata/zookeeper
+
+ExecStop=/usr/bin/docker stop zookeeper-%i
+
+[X-Fleet]
+MachineID=#MACHINE_ID#

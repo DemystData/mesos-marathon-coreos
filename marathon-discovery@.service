@@ -1,0 +1,14 @@
+[Unit]
+Description=Announce Marathon%i
+BindsTo=marathon@%i.service
+After=marathon@%i.service
+Requires=etcd.service
+
+[Service]
+EnvironmentFile=/etc/environment
+
+ExecStart=/bin/sh -c "while true; do etcdctl set /services/marathon ${COREOS_PRIVATE_IPV4}:8080 --ttl 60 || etcdctl update /services/marathon ${COREOS_PRIVATE_IPV4}:8080;sleep 45;done"
+
+[X-Fleet]
+MachineOf=marathon@%i.service
+
